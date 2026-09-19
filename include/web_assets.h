@@ -104,6 +104,7 @@ body {
   letter-spacing: 2px;
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -915,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/pair/start', { method: 'POST' })
       .then(res => res.json())
       .then(data => {
-        alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMIRC.');
+        alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMI-RC-pseudo.');
         fetchPairingStatus();
       })
       .catch(err => alert('Failed starting BLE pairing mode: ' + err));

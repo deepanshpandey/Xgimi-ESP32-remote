@@ -15,7 +15,7 @@ private:
 
 public:
     BLEHidRemoteServer();
-    void begin(const char* deviceName = "XGIMIRC", uint16_t vid = 0x000D, uint16_t pid = 0x3838);
+    void begin(const char* deviceName = "XGIMI-RC-pseudo", uint16_t vid = 0x000D, uint16_t pid = 0x3838);
     
     bool isConnected() const { return connected; }
     bool isAdvertising() const { return advertising; }

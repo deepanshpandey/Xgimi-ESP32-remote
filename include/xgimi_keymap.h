@@ -7,7 +7,7 @@
 // XGIMI Remote Vendor ID & Product ID
 #define XGIMI_VENDOR_ID  0x000D
 #define XGIMI_PRODUCT_ID 0x3838
-#define XGIMI_DEVICE_NAME "XGIMIRC"
+#define XGIMI_DEVICE_NAME "XGIMI-RC-pseudo"
 
 struct XGIMIKeyMapping {
     const char* actionName;

@@ -78,7 +78,7 @@ def generate_header(mappings, output_path):
         f.write("// XGIMI Remote Vendor ID & Product ID\n")
         f.write("#define XGIMI_VENDOR_ID  0x000D\n")
         f.write("#define XGIMI_PRODUCT_ID 0x3838\n")
-        f.write('#define XGIMI_DEVICE_NAME "XGIMIRC"\n\n')
+        f.write('#define XGIMI_DEVICE_NAME "XGIMI-RC-pseudo"\n\n')
 
         f.write("struct XGIMIKeyMapping {\n")
         f.write("    const char* actionName;\n")

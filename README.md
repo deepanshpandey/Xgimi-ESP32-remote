@@ -6,7 +6,7 @@ A full-featured ESP32 remote controller that emulates the official **XGIMI Bluet
 
 ## 🌟 Key Features
 
-- **XGIMI BLE HID Emulation**: Identifies as Vendor `0x000D` / Product `0x3838` (Name: `XGIMIRC`). The XGIMI projector's Android OS automatically matches it to `/vendor/usr/keylayout/Vendor_000d_Product_3838.kl`.
+- **XGIMI BLE HID Emulation**: Identifies as Vendor `0x000D` / Product `0x3838` (Name: `XGIMI-RC-pseudo`). The XGIMI projector's Android OS automatically matches it to `/vendor/usr/keylayout/Vendor_000d_Product_3838.kl`.
 - **Dynamic `.kl` Parser**: Automated Python tooling reads `Vendor_000d_Product_3838.kl` and builds C++ HID scancode headers.
 - **Embedded Web Remote App**: Serves a sleek, glassmorphic dark-mode remote control directly from the ESP32 over Wi-Fi.
 - **All Special XGIMI Keys Supported**:
@@ -78,7 +78,7 @@ pio device monitor
 
 1. Turn on your XGIMI Projector.
 2. Go to **Settings** ⚙️ ➔ **Remotes & Accessories** ➔ **Add accessory**.
-3. Select **`XGIMIRC`** from the list of available Bluetooth devices.
+3. Select **`XGIMI-RC-pseudo`** from the list of available Bluetooth devices.
 4. Once paired, pressing any button on the Web Remote will immediately trigger the corresponding XGIMI action!
 
 ---
@@ -97,3 +97,10 @@ curl -X POST "http://192.168.4.1/api/press?action=XGIMI_MISCKEY"
 # Trigger D-Pad Up
 curl -X POST "http://192.168.4.1/api/press?action=DPAD_UP"
 ```
+
+---
+
+## ⚖️ Disclaimer & Legal Notice
+
+The key layout and "XGIMI" trademark are the property of **Chengdu XGIMI Technology Co., Ltd.** (often referred to simply as **XGIMI Technology Co., Ltd.**). This project is an independent open-source controller intended for personal interoperability and educational use.
+
