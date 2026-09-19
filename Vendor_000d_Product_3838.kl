@@ -1,0 +1,26 @@
+# Key Layout file for XGIMI Remote Control
+# Vendor ID: 0x000d, Product ID: 0x3838
+
+key 28    DPAD_CENTER
+key 353   DPAD_CENTER
+key 87    FOCUS_AUTO
+key 67    FOCUS_LEFT
+key 68    FOCUS_RIGHT
+key 102   HOME
+key 103   DPAD_UP
+key 105   DPAD_LEFT
+key 106   DPAD_RIGHT
+key 108   DPAD_DOWN
+key 116   KPPOWER
+key 113   KPPOWER
+key 114   VOLUME_DOWN
+key 115   VOLUME_UP
+key 1     BACK
+key 158   BACK
+key 172   HOME
+key 217   VOICE_ASSIST
+key 240   MENU
+key 88    RC_LOW_BATTERY
+key 66    XGIMI_MISCKEY
+key 65    XGIMI_SOURCE
+key 62    FOCUS_MAN_NEW
