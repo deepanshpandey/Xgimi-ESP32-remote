@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   openPairingBtn.addEventListener('click', () => {
     pairingModal.classList.add('open');
     fetchPairingStatus();
+    fetchWifiStatus();
   });
 
   closePairingBtn.addEventListener('click', () => {
@@ -168,6 +169,63 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(err => alert('Failed submitting PIN: ' + err));
   });
+
+  const wifiStatusText = document.getElementById('wifiStatusText');
+  const wifiSsidInput = document.getElementById('wifiSsidInput');
+  const wifiPassInput = document.getElementById('wifiPassInput');
+  const saveWifiBtn = document.getElementById('saveWifiBtn');
+
+  function fetchWifiStatus() {
+    if (!wifiStatusText) return;
+    fetch('/api/wifi/status')
+      .then(res => res.json())
+      .then(data => {
+        if (data.connected) {
+          wifiStatusText.textContent = `Connected to ${data.ssid} (${data.ip})`;
+          wifiStatusText.style.color = '#00e676';
+        } else {
+          wifiStatusText.textContent = 'Not connected to Home Wi-Fi';
+          wifiStatusText.style.color = '#ff4b4b';
+        }
+      })
+      .catch(err => console.error('Failed fetching Wi-Fi status:', err));
+  }
+
+  if (saveWifiBtn) {
+    saveWifiBtn.addEventListener('click', () => {
+      const ssid = wifiSsidInput.value.trim();
+      const pass = wifiPassInput.value.trim();
+      if (!ssid) {
+        alert('Please enter a Wi-Fi SSID.');
+        return;
+      }
+      saveWifiBtn.textContent = 'Connecting...';
+      saveWifiBtn.disabled = true;
+
+      fetch('/api/wifi/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(pass)}`
+      })
+        .then(res => res.json())
+        .then(data => {
+          saveWifiBtn.textContent = 'Connect & Save';
+          saveWifiBtn.disabled = false;
+          if (data.connected) {
+            alert(`Success! Connected to '${ssid}'.\nHome IP: http://${data.ip}\nmDNS URL: http://xgimi-remote.local`);
+            fetchWifiStatus();
+          } else {
+            alert(`Failed connecting to '${ssid}'. Please check credentials.`);
+            fetchWifiStatus();
+          }
+        })
+        .catch(err => {
+          saveWifiBtn.textContent = 'Connect & Save';
+          saveWifiBtn.disabled = false;
+          alert('Network request error: ' + err);
+        });
+    });
+  }
 
   // Attach event listeners to all remote buttons
   const buttons = document.querySelectorAll('[data-action]');

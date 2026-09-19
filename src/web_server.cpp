@@ -2,6 +2,7 @@
 #include "web_assets.h"
 #include "xgimi_keymap.h"
 #include "ble_hid_remote.h"
+#include "wifi_manager.h"
 #include <ArduinoJson.h>
 
 AsyncWebServer server(80);
@@ -64,7 +65,7 @@ void initWebServer() {
 
     // Serve web app homepage directly from PROGMEM
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        request->send_P(200, "text/html", INDEX_HTML);
+        request->send(200, "text/html", INDEX_HTML);
     });
 
     // REST API Endpoint: POST or GET /api/press?action=FOCUS_AUTO
@@ -153,6 +154,39 @@ void initWebServer() {
             obj["hid_code"] = XGIMI_KEYMAP[i].hidCode;
             obj["description"] = XGIMI_KEYMAP[i].description;
         }
+        String response;
+        serializeJson(doc, response);
+        request->send(200, "application/json", response);
+    });
+
+    // Wi-Fi Configuration Endpoints
+    server.on("/api/wifi/status", HTTP_GET, [](AsyncWebServerRequest *request){
+        StaticJsonDocument<256> doc;
+        doc["connected"] = isHomeWiFiConnected();
+        doc["ssid"] = getHomeWiFiSSID();
+        doc["ip"] = getHomeWiFiIP();
+        doc["mdns"] = "http://xgimi-remote.local";
+        String response;
+        serializeJson(doc, response);
+        request->send(200, "application/json", response);
+    });
+
+    server.on("/api/wifi/save", HTTP_POST, [](AsyncWebServerRequest *request){
+        String ssid = "";
+        String pass = "";
+        if (request->hasParam("ssid", true)) {
+            ssid = request->getParam("ssid", true)->value();
+        }
+        if (request->hasParam("pass", true)) {
+            pass = request->getParam("pass", true)->value();
+        }
+
+        bool success = connectHomeWiFi(ssid, pass);
+        StaticJsonDocument<256> doc;
+        doc["status"] = success ? "ok" : "error";
+        doc["connected"] = success;
+        doc["ip"] = getHomeWiFiIP();
+        doc["message"] = success ? "Connected to Home Wi-Fi!" : "Could not connect to specified Wi-Fi";
         String response;
         serializeJson(doc, response);
         request->send(200, "application/json", response);

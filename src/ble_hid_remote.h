@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <NimBLEDevice.h>
+#include <NimBLEHIDDevice.h>
 
 class BLEHidRemoteServer : public NimBLEServerCallbacks, public NimBLESecurityCallbacks {
 private:

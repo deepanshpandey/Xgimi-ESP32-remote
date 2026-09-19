@@ -179,6 +179,16 @@
           <div class="pin-input-group">
             <input type="text" id="pinInput" maxlength="6" placeholder="Enter PIN code" autocomplete="off" />
             <button class="btn btn-modal btn-action-primary" id="submitPinBtn">Pair PIN</button>
+        <!-- Home Wi-Fi Network Setup -->
+        <div class="action-section">
+          <span class="section-title">CONNECT TO HOME WI-FI</span>
+          <div class="pair-info-row" style="margin-bottom: 6px;">
+            <span>Current Status:</span> <strong id="wifiStatusText">Checking...</strong>
+          </div>
+          <div class="wifi-input-group">
+            <input type="text" id="wifiSsidInput" placeholder="Home Wi-Fi SSID" autocomplete="off" />
+            <input type="password" id="wifiPassInput" placeholder="Wi-Fi Password" autocomplete="off" />
+            <button class="btn btn-modal btn-action-primary" id="saveWifiBtn">Connect & Save</button>
           </div>
         </div>
       </div>

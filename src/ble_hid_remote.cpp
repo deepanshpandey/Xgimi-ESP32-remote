@@ -52,8 +52,8 @@ BLEHidRemoteServer::BLEHidRemoteServer()
 void BLEHidRemoteServer::begin(const char* deviceName, uint16_t vid, uint16_t pid) {
     NimBLEDevice::init(deviceName);
     
-    // Enable BLE Security (Bonding + Secure Connections)
-    NimBLEDevice::setSecurityAuth(true, true, true, BLE_SM_PAIR_AUTHREQ_BOND);
+    // Enable BLE Security (Bonding + MITM + Secure Connections)
+    NimBLEDevice::setSecurityAuth(true, true, true);
     NimBLEDevice::setSecurityIOCap(BLE_HS_IO_NO_INPUT_OUTPUT);
     NimBLEDevice::setSecurityCallbacks(this);
 
@@ -76,7 +76,7 @@ void BLEHidRemoteServer::begin(const char* deviceName, uint16_t vid, uint16_t pi
 
 void BLEHidRemoteServer::startPairingMode(uint32_t durationSeconds) {
     NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
-    pAdvertising->setAppearance(HID_REMOTE); // 0x0180 Remote Control
+    pAdvertising->setAppearance(0x0180); // 0x0180 Remote Control
     pAdvertising->addServiceUUID(hid->hidService()->getUUID());
     pAdvertising->start(durationSeconds);
     advertising = true;

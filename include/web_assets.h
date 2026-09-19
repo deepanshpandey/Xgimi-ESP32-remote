@@ -603,6 +603,29 @@ body {
   border-color: var(--accent-cyan);
 }
 
+.wifi-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wifi-input-group input {
+  width: 100%;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0 12px;
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.wifi-input-group input:focus {
+  border-color: var(--accent-cyan);
+}
+
 </style>
 </head>
 <body>
@@ -775,6 +798,16 @@ body {
           <div class="pin-input-group">
             <input type="text" id="pinInput" maxlength="6" placeholder="Enter PIN code" autocomplete="off" />
             <button class="btn btn-modal btn-action-primary" id="submitPinBtn">Pair PIN</button>
+        <!-- Home Wi-Fi Network Setup -->
+        <div class="action-section">
+          <span class="section-title">CONNECT TO HOME WI-FI</span>
+          <div class="pair-info-row" style="margin-bottom: 6px;">
+            <span>Current Status:</span> <strong id="wifiStatusText">Checking...</strong>
+          </div>
+          <div class="wifi-input-group">
+            <input type="text" id="wifiSsidInput" placeholder="Home Wi-Fi SSID" autocomplete="off" />
+            <input type="password" id="wifiPassInput" placeholder="Wi-Fi Password" autocomplete="off" />
+            <button class="btn btn-modal btn-action-primary" id="saveWifiBtn">Connect & Save</button>
           </div>
         </div>
       </div>
@@ -900,6 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
   openPairingBtn.addEventListener('click', () => {
     pairingModal.classList.add('open');
     fetchPairingStatus();
+    fetchWifiStatus();
   });
 
   closePairingBtn.addEventListener('click', () => {
@@ -952,6 +986,63 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(err => alert('Failed submitting PIN: ' + err));
   });
+
+  const wifiStatusText = document.getElementById('wifiStatusText');
+  const wifiSsidInput = document.getElementById('wifiSsidInput');
+  const wifiPassInput = document.getElementById('wifiPassInput');
+  const saveWifiBtn = document.getElementById('saveWifiBtn');
+
+  function fetchWifiStatus() {
+    if (!wifiStatusText) return;
+    fetch('/api/wifi/status')
+      .then(res => res.json())
+      .then(data => {
+        if (data.connected) {
+          wifiStatusText.textContent = `Connected to ${data.ssid} (${data.ip})`;
+          wifiStatusText.style.color = '#00e676';
+        } else {
+          wifiStatusText.textContent = 'Not connected to Home Wi-Fi';
+          wifiStatusText.style.color = '#ff4b4b';
+        }
+      })
+      .catch(err => console.error('Failed fetching Wi-Fi status:', err));
+  }
+
+  if (saveWifiBtn) {
+    saveWifiBtn.addEventListener('click', () => {
+      const ssid = wifiSsidInput.value.trim();
+      const pass = wifiPassInput.value.trim();
+      if (!ssid) {
+        alert('Please enter a Wi-Fi SSID.');
+        return;
+      }
+      saveWifiBtn.textContent = 'Connecting...';
+      saveWifiBtn.disabled = true;
+
+      fetch('/api/wifi/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(pass)}`
+      })
+        .then(res => res.json())
+        .then(data => {
+          saveWifiBtn.textContent = 'Connect & Save';
+          saveWifiBtn.disabled = false;
+          if (data.connected) {
+            alert(`Success! Connected to '${ssid}'.\nHome IP: http://${data.ip}\nmDNS URL: http://xgimi-remote.local`);
+            fetchWifiStatus();
+          } else {
+            alert(`Failed connecting to '${ssid}'. Please check credentials.`);
+            fetchWifiStatus();
+          }
+        })
+        .catch(err => {
+          saveWifiBtn.textContent = 'Connect & Save';
+          saveWifiBtn.disabled = false;
+          alert('Network request error: ' + err);
+        });
+    });
+  }
 
   // Attach event listeners to all remote buttons
   const buttons = document.querySelectorAll('[data-action]');
