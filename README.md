@@ -31,18 +31,21 @@ Xgimi-ESP32-remote/
 ├── scripts/
 │   ├── generate_keymap.py         # Parses .kl file to produce include/xgimi_keymap.h
 │   ├── bundle_web.py              # Inlines web UI into include/web_assets.h
-│   └── build_hooks.py             # Pre-build script for PlatformIO
+│   ├── build_hooks.py             # Pre-build script for PlatformIO
+│   └── set_wifi.py                # Sets Wi-Fi credentials over USB Serial
 ├── include/
+│   ├── wifi_config.h              # Home Wi-Fi configuration header
 │   ├── xgimi_keymap.h             # Auto-generated scancode definitions
 │   └── web_assets.h               # Auto-generated embedded Web UI (PROGMEM)
 ├── src/
 │   ├── main.cpp                   # System entry point
+│   ├── wifi_manager.h/.cpp        # Wi-Fi STA, SoftAP, NVS storage & mDNS
 │   ├── ble_hid_remote.h/.cpp      # NimBLE HID server (VID: 0x000D, PID: 0x3838)
 │   └── web_server.h/.cpp          # Web Server & WebSocket/REST API endpoints
 └── web/
-    ├── index.html                 # Remote Web UI structure
+    ├── index.html                 # Remote Web UI structure & Pairing Modal
     ├── style.css                  # Glassmorphism & dark-mode styling
-    └── app.js                     # Tactile feedback & WebSocket communication
+    └── app.js                     # Tactile feedback, Pairing & Wi-Fi logic
 ```
 
 ---
@@ -63,18 +66,42 @@ pio run --target upload
 pio device monitor
 ```
 
-### 2. Connect Your Phone / Web Browser
+### 2. Home Wi-Fi Setup (3 Easy Methods)
 
-1. Power on the ESP32.
-2. On your smartphone or laptop, connect to the Wi-Fi network:
+You can connect the ESP32 to your home Wi-Fi network so you don't have to switch Wi-Fi networks on your phone:
+
+#### Method A: Via Configuration File (`include/wifi_config.h`)
+Edit [`include/wifi_config.h`](include/wifi_config.h) before uploading:
+```cpp
+#define HOME_WIFI_SSID     "YourHomeWiFi"
+#define HOME_WIFI_PASSWORD "YourPassword"
+```
+
+#### Method B: Instantly via USB Serial (No Re-flashing Needed)
+With the ESP32 plugged in, run:
+```bash
+py scripts/set_wifi.py "YourHomeWiFi" "YourPassword"
+```
+The credentials are saved directly into the ESP32's non-volatile flash memory (NVS).
+
+#### Method C: Through the WebApp Interface
+1. Connect to the ESP32's direct Wi-Fi hotspot:
    - **SSID**: `XGIMI-Remote-AP`
    - **Password**: `xgimiremote`
-3. Open browser and go to:
-   ```text
-   http://192.168.4.1
-   ```
+2. Open **`http://192.168.4.1`** in your browser.
+3. Tap the **`[ 🔗 ]`** button in the header.
+4. Under **"CONNECT TO HOME WI-FI"**, enter your SSID and password, then tap **"Connect & Save"**.
 
-### 3. Pair ESP32 with XGIMI Projector
+---
+
+### 3. Accessing the Web Remote
+
+- **On Home Wi-Fi**: Open **`http://xgimi-remote.local`** (or the IP assigned by your router).
+- **On Direct Hotspot**: Open **`http://192.168.4.1`** (connected to `XGIMI-Remote-AP`).
+
+---
+
+### 4. Pair ESP32 with XGIMI Projector
 
 1. Turn on your XGIMI Projector.
 2. Go to **Settings** ⚙️ ➔ **Remotes & Accessories** ➔ **Add accessory**.
