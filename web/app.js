@@ -138,10 +138,41 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.error('Failed fetching pairing status:', err));
   }
 
+  // Rich Haptic Vibration Engine
+  function triggerHaptic(type = 'default') {
+    if (!('vibrate' in navigator)) return;
+    try {
+      if (type === 'heavy' || type === 'power') {
+        // Distinct double-pulse for power & dangerous actions
+        navigator.vibrate([40, 50, 40]);
+      } else if (type === 'select' || type === 'ok') {
+        // Firm tactile pulse for OK / Select button
+        navigator.vibrate(50);
+      } else if (type === 'nav') {
+        // Quick, crisp click for D-pad arrows
+        navigator.vibrate(28);
+      } else if (type === 'success') {
+        // Ascending double-affirmation pulse
+        navigator.vibrate([30, 40, 40]);
+      } else {
+        // Standard tactile click for remote buttons
+        navigator.vibrate(38);
+      }
+    } catch (e) {
+      // Gracefully ignore if platform restricts vibration
+    }
+  }
+
   // Send action to ESP32
   function triggerAction(actionName) {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(25);
+    if (actionName === 'KPPOWER' || actionName === 'MUTE') {
+      triggerHaptic('power');
+    } else if (actionName === 'DPAD_CENTER') {
+      triggerHaptic('select');
+    } else if (actionName.startsWith('DPAD_')) {
+      triggerHaptic('nav');
+    } else {
+      triggerHaptic('default');
     }
 
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -154,25 +185,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Pairing Modal Event Handlers
   openPairingBtn.addEventListener('click', () => {
+    triggerHaptic('default');
     pairingModal.classList.add('open');
     fetchPairingStatus();
     fetchWifiStatus();
   });
 
   closePairingBtn.addEventListener('click', () => {
+    triggerHaptic('nav');
     pairingModal.classList.remove('open');
   });
 
   pairingModal.addEventListener('click', (e) => {
     if (e.target === pairingModal) {
+      triggerHaptic('nav');
       pairingModal.classList.remove('open');
     }
   });
 
   startPairingBtn.addEventListener('click', () => {
+    triggerHaptic('heavy');
     fetch('/api/pair/start', { method: 'POST' })
       .then(res => res.json())
       .then(data => {
+        triggerHaptic('success');
         alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMI-RC-pseudo.');
         fetchPairingStatus();
       })
@@ -180,10 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   clearBondsBtn.addEventListener('click', () => {
+    triggerHaptic('heavy');
     if (confirm('Are you sure you want to clear all stored Bluetooth bonds?')) {
       fetch('/api/pair/clear', { method: 'POST' })
         .then(res => res.json())
         .then(data => {
+          triggerHaptic('success');
           alert('Cleared all saved Bluetooth bonds!');
           fetchPairingStatus();
         })
@@ -192,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   submitPinBtn.addEventListener('click', () => {
+    triggerHaptic('default');
     const pin = pinInput.value.trim();
     if (!pin) {
       alert('Please enter a PIN code.');
@@ -233,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (saveWifiBtn) {
     saveWifiBtn.addEventListener('click', () => {
+      triggerHaptic('default');
       const ssid = wifiSsidInput.value.trim();
       const pass = wifiPassInput.value.trim();
       if (!ssid) {
@@ -252,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
           saveWifiBtn.textContent = 'Connect & Save';
           saveWifiBtn.disabled = false;
           if (data.connected) {
+            triggerHaptic('success');
             alert(`Success! Connected to '${ssid}'.\nHome IP: http://${data.ip}\nmDNS URL: http://xgimi-remote.local`);
             fetchWifiStatus();
           } else {
@@ -283,6 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     button.addEventListener('pointerleave', () => {
+      button.classList.remove('active');
+    });
+
+    button.addEventListener('pointercancel', () => {
       button.classList.remove('active');
     });
   });
