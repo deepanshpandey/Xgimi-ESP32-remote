@@ -19,16 +19,26 @@ except ImportError:
 def find_esp32_port():
     ports = list(serial.tools.list_ports.comports())
     for p in ports:
-        if "1A86" in p.hwid or "CP210" in p.hwid or "CH340" in p.description or "USB-SERIAL" in p.description:
+        hwid = p.hwid.upper() if p.hwid else ""
+        desc = p.description.upper() if p.description else ""
+        if any(keyword in hwid or keyword in desc for keyword in ["1A86", "CP210", "CH340", "USB-SERIAL", "ESP32", "USB JTAG"]):
             return p.device
     if ports:
         return ports[0].device
-    return "COM3"
+    if sys.platform.startswith("win"):
+        return "COM3"
+    elif sys.platform.startswith("darwin"):
+        return "/dev/cu.usbserial-0001"
+    else:
+        return "/dev/ttyUSB0"
 
 def main():
     if len(sys.argv) < 3:
-        print("Usage: py scripts/set_wifi.py <SSID> <PASSWORD> [COM_PORT]")
-        print("Example: py scripts/set_wifi.py \"MyHomeNetwork\" \"Secret12345\" COM3")
+        cmd_name = "python" if sys.platform.startswith("win") else "python3"
+        print(f"Usage: {cmd_name} scripts/set_wifi.py <SSID> <PASSWORD> [PORT]")
+        print(f"Example (Windows): {cmd_name} scripts/set_wifi.py \"MyHomeNetwork\" \"Secret12345\" COM3")
+        print(f"Example (macOS):   python3 scripts/set_wifi.py \"MyHomeNetwork\" \"Secret12345\" /dev/cu.usbserial-0001")
+        print(f"Example (Linux):   python3 scripts/set_wifi.py \"MyHomeNetwork\" \"Secret12345\" /dev/ttyUSB0")
         sys.exit(1)
 
     ssid = sys.argv[1].strip()

@@ -62,9 +62,11 @@ pio run
 # Flash to ESP32 board
 pio run --target upload
 
-# Open Serial Monitor
+# Open Serial Monitor (115200 baud)
 pio device monitor
 ```
+
+*(Note: If `pio` is not in your global PATH, invoke via your PlatformIO environment: on Windows `~/.platformio/penv/Scripts/platformio.exe run --target upload`, or on macOS/Linux `~/.platformio/penv/bin/platformio run --target upload`)*
 
 ### 2. Home Wi-Fi Setup (3 Easy Methods)
 
@@ -78,11 +80,21 @@ Edit [`include/wifi_config.h`](include/wifi_config.h) before uploading:
 ```
 
 #### Method B: Instantly via USB Serial (No Re-flashing Needed)
-With the ESP32 plugged in, run:
+Ensure `pyserial` is installed (`pip install pyserial`), connect the ESP32 via USB, and run:
+
+**On Windows:**
 ```bash
-py scripts/set_wifi.py "YourHomeWiFi" "YourPassword"
+python scripts/set_wifi.py "YourHomeWiFi" "YourPassword"
 ```
-The credentials are saved directly into the ESP32's non-volatile flash memory (NVS).
+*(If multiple COM ports exist, you can optionally specify the port: `python scripts/set_wifi.py "YourHomeWiFi" "YourPassword" COM3`)*
+
+**On macOS / Linux:**
+```bash
+python3 scripts/set_wifi.py "YourHomeWiFi" "YourPassword"
+```
+*(Optionally specify device path, e.g. `/dev/cu.usbserial-0001` or `/dev/ttyUSB0`)*
+
+The credentials are saved directly into the ESP32's non-volatile flash memory (NVS) and it will immediately connect to your network.
 
 #### Method C: Through the WebApp Interface
 1. Connect to the ESP32's direct Wi-Fi hotspot:
