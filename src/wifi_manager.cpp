@@ -24,19 +24,25 @@ bool connectHomeWiFi(const String& ssid, const String& password) {
     prefs.end();
 
     Serial.printf("[Wi-Fi] Connecting to Home Wi-Fi: '%s'...\n", ssid.c_str());
+    WiFi.setAutoReconnect(true);
     WiFi.disconnect(false, false);
     delay(100);
     WiFi.begin(ssid.c_str(), password.c_str());
 
     unsigned long start = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - start < 10000) {
-        delay(500);
+        delay(300);
         Serial.print(".");
     }
     Serial.println();
 
     if (WiFi.status() == WL_CONNECTED) {
         IPAddress staIP = WiFi.localIP();
+        int channel = WiFi.channel();
+        // Bring up SoftAP on the exact same RF channel so there's never a channel conflict
+        WiFi.mode(WIFI_AP_STA);
+        WiFi.softAP(AP_SSID, AP_PASSWORD, channel);
+
         Serial.println("==================================================");
         Serial.printf("[Wi-Fi] Connected to Home Wi-Fi!\n");
         Serial.printf("[Wi-Fi] IP Address: http://%s\n", staIP.toString().c_str());
@@ -48,24 +54,17 @@ bool connectHomeWiFi(const String& ssid, const String& password) {
         return true;
     } else {
         Serial.printf("[Wi-Fi] Could not connect to '%s' (Timeout). Continuing with SoftAP mode.\n", ssid.c_str());
+        // Fallback: Bring up SoftAP on default channel
+        WiFi.mode(WIFI_AP_STA);
+        WiFi.softAP(AP_SSID, AP_PASSWORD);
         return false;
     }
 }
 
 void initWiFi() {
-    // 1. Dual Mode: Access Point + Station
-    WiFi.mode(WIFI_AP_STA);
+    WiFi.setAutoReconnect(true);
 
-    // 2. Start Access Point
-    WiFi.softAP(AP_SSID, AP_PASSWORD);
-    IPAddress apIP = WiFi.softAPIP();
-    Serial.println("--------------------------------------------------");
-    Serial.printf("[Wi-Fi] SoftAP SSID:      '%s'\n", AP_SSID);
-    Serial.printf("[Wi-Fi] SoftAP Password:  '%s'\n", AP_PASSWORD);
-    Serial.printf("[Wi-Fi] Direct AP URL:    http://%s\n", apIP.toString().c_str());
-    Serial.println("--------------------------------------------------");
-
-    // 3. Check for saved credentials in Preferences (NVS)
+    // 1. Check for saved credentials in Preferences (NVS)
     prefs.begin("wifi", true);
     String savedSSID = prefs.getString("ssid", "");
     String savedPass = prefs.getString("pass", "");
@@ -78,8 +77,29 @@ void initWiFi() {
     }
 
     if (savedSSID.length() > 0) {
-        connectHomeWiFi(savedSSID, savedPass);
+        // Connect in STA mode first to avoid channel conflict with SoftAP
+        WiFi.mode(WIFI_STA);
+        bool connected = connectHomeWiFi(savedSSID, savedPass);
+        IPAddress apIP = WiFi.softAPIP();
+        Serial.println("--------------------------------------------------");
+        if (connected) {
+            Serial.printf("[Wi-Fi] SoftAP Active:    '%s' (Ch %d)\n", AP_SSID, WiFi.channel());
+        } else {
+            Serial.printf("[Wi-Fi] SoftAP SSID:      '%s'\n", AP_SSID);
+            Serial.printf("[Wi-Fi] SoftAP Password:  '%s'\n", AP_PASSWORD);
+        }
+        Serial.printf("[Wi-Fi] Direct AP URL:    http://%s\n", apIP.toString().c_str());
+        Serial.println("--------------------------------------------------");
     } else {
+        // No saved credentials, start SoftAP for initial setup
+        WiFi.mode(WIFI_AP_STA);
+        WiFi.softAP(AP_SSID, AP_PASSWORD);
+        IPAddress apIP = WiFi.softAPIP();
+        Serial.println("--------------------------------------------------");
+        Serial.printf("[Wi-Fi] SoftAP SSID:      '%s'\n", AP_SSID);
+        Serial.printf("[Wi-Fi] SoftAP Password:  '%s'\n", AP_PASSWORD);
+        Serial.printf("[Wi-Fi] Direct AP URL:    http://%s\n", apIP.toString().c_str());
+        Serial.println("--------------------------------------------------");
         Serial.println("[Wi-Fi] No Home Wi-Fi credentials set yet.");
         Serial.println("[Wi-Fi] Configure via include/wifi_config.h, WebApp, or USB CLI: 'SET_WIFI:<ssid>,<password>'");
     }

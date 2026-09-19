@@ -11,13 +11,13 @@ void setup() {
     Serial.println("   XGIMI ESP32 BLE Remote Control Server  ");
     Serial.println("==========================================");
 
-    // 1. Initialize Wi-Fi (SoftAP + Home Wi-Fi + mDNS)
-    initWiFi();
-
-    // 2. Initialize BLE HID Remote Server
+    // 1. Initialize BLE HID Remote Server
     Serial.printf("[BLE] Initializing BLE HID (%s, VID: 0x%04X, PID: 0x%04X)...\n", 
                   XGIMI_DEVICE_NAME, XGIMI_VENDOR_ID, XGIMI_PRODUCT_ID);
     BleRemote.begin(XGIMI_DEVICE_NAME, XGIMI_VENDOR_ID, XGIMI_PRODUCT_ID);
+
+    // 2. Initialize Wi-Fi (Home Wi-Fi + SoftAP + mDNS)
+    initWiFi();
 
     // 3. Initialize Embedded Web Application & API
     initWebServer();
