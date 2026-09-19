@@ -308,6 +308,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Force Refresh PWA & Clear Cached Assets
+  const refreshPwaBtn = document.getElementById('refreshPwaBtn');
+  if (refreshPwaBtn) {
+    refreshPwaBtn.addEventListener('click', async () => {
+      triggerHaptic('heavy');
+      refreshPwaBtn.textContent = 'Updating...';
+      refreshPwaBtn.disabled = true;
+
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+          }
+        }
+        if ('caches' in window) {
+          const cacheKeys = await caches.keys();
+          for (const key of cacheKeys) {
+            await caches.delete(key);
+          }
+        }
+      } catch (err) {
+        console.warn('Cache clearance error:', err);
+      }
+
+      // Hard reload from server
+      window.location.reload(true);
+    });
+  }
+
   // Attach event listeners to all remote buttons
   const buttons = document.querySelectorAll('[data-action]');
   buttons.forEach(button => {

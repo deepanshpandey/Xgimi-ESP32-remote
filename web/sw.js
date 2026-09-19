@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xgimi-remote-v3';
+const CACHE_NAME = 'xgimi-remote-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',

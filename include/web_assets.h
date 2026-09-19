@@ -433,44 +433,53 @@ body {
   flex-shrink: 0;
 }
 
-/* Modal Overlay & Card (Google TV Dark Sheet) */
+/* Modal Overlay & Card (Full Screen Edge-to-Edge Sheet) */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 100;
+  height: 100dvh;
+  background: #000000;
+  z-index: 200;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
-  padding: 16px;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(12px);
+  padding: 0;
 }
 
 .modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
+  transform: translateY(0);
 }
 
 .modal-card {
   width: 100%;
-  max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: var(--surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 28px;
-  padding: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+  max-width: 480px;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: #000000;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 20px 20px 32px 20px;
+  padding-top: max(20px, env(safe-area-inset-top, 20px));
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 32px));
+  padding-left: max(20px, env(safe-area-inset-left, 20px));
+  padding-right: max(20px, env(safe-area-inset-right, 20px));
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #33363f transparent;
 }
@@ -488,14 +497,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #1f2127;
-  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .modal-title {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 1.5px;
   color: var(--text-primary);
 }
 
@@ -503,21 +513,22 @@ body {
   background: var(--surface-btn);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btn-close:hover {
+.btn-close:active, .btn-close.active {
+  background: var(--surface-btn-active);
+  transform: scale(0.92);
   color: #fff;
-  background: var(--surface-btn-hover);
 }
 
 .modal-body {
@@ -606,6 +617,17 @@ body {
 .btn-action-danger:active, .btn-action-danger.active {
   background: #2f181b;
   border-color: var(--google-red);
+}
+
+.btn-action-secondary {
+  background: #18191e;
+  border: 1px solid #2d3038;
+  color: var(--text-primary);
+}
+
+.btn-action-secondary:active, .btn-action-secondary.active {
+  background: #24262f;
+  border-color: #3e434f;
 }
 
 .pin-input-group {
@@ -708,6 +730,14 @@ body {
   .btn-action-danger:hover {
     background: #2f181b;
     border-color: var(--google-red);
+  }
+  .btn-action-secondary:hover {
+    background: #22242b;
+    border-color: #3e434f;
+  }
+  .btn-close:hover {
+    color: #fff;
+    background: var(--surface-btn-hover);
   }
 }
 
@@ -923,6 +953,18 @@ body {
             <input type="password" id="wifiPassInput" placeholder="Wi-Fi Password" autocomplete="off" />
             <button class="btn btn-modal btn-action-primary" id="saveWifiBtn">Connect & Save</button>
           </div>
+        </div>
+
+        <!-- PWA Cache & App Update -->
+        <div class="action-section">
+          <span class="section-title">PWA & APP UPDATE</span>
+          <button class="btn btn-modal btn-action-secondary" id="refreshPwaBtn" title="Force Refresh PWA & Clear Cache">
+            <svg viewBox="0 0 24 24" class="icon">
+              <path fill="currentColor"
+                d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+            </svg>
+            <span>Refresh & Update PWA</span>
+          </button>
         </div>
       </div>
     </div>
@@ -1239,6 +1281,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Force Refresh PWA & Clear Cached Assets
+  const refreshPwaBtn = document.getElementById('refreshPwaBtn');
+  if (refreshPwaBtn) {
+    refreshPwaBtn.addEventListener('click', async () => {
+      triggerHaptic('heavy');
+      refreshPwaBtn.textContent = 'Updating...';
+      refreshPwaBtn.disabled = true;
+
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+          }
+        }
+        if ('caches' in window) {
+          const cacheKeys = await caches.keys();
+          for (const key of cacheKeys) {
+            await caches.delete(key);
+          }
+        }
+      } catch (err) {
+        console.warn('Cache clearance error:', err);
+      }
+
+      // Hard reload from server
+      window.location.reload(true);
+    });
+  }
+
   // Attach event listeners to all remote buttons
   const buttons = document.querySelectorAll('[data-action]');
   buttons.forEach(button => {
@@ -1304,7 +1376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </html>
 )rawliteral";
-static const size_t INDEX_HTML_LEN = 37463;
+static const size_t INDEX_HTML_LEN = 39897;
 
 static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
 {
@@ -1338,7 +1410,7 @@ static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
 static const size_t MANIFEST_JSON_LEN = 589;
 
 static const char SW_JS[] PROGMEM = R"rawliteral(
-const CACHE_NAME = 'xgimi-remote-v3';
+const CACHE_NAME = 'xgimi-remote-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
