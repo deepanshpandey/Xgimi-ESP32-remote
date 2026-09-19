@@ -53,6 +53,8 @@ def parse_kl_file(kl_path):
             if match:
                 linux_code = int(match.group(1))
                 android_action = match.group(2)
+                if linux_code == 113:
+                    android_action = "MUTE"
                 hid_info = LINUX_TO_HID.get(linux_code, {
                     "hid_page": 0x07,
                     "hid_code": 0x00,

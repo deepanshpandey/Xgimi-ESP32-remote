@@ -29,7 +29,7 @@ static const XGIMIKeyMapping XGIMI_KEYMAP[] = {
     { "DPAD_RIGHT", 106, 0x7, 0x4f, "D-Pad Right" },
     { "DPAD_DOWN", 108, 0x7, 0x51, "D-Pad Down" },
     { "KPPOWER", 116, 0xc, 0x30, "Power" },
-    { "KPPOWER", 113, 0xc, 0xe2, "Mute" },
+    { "MUTE", 113, 0xc, 0xe2, "Mute" },
     { "VOLUME_DOWN", 114, 0xc, 0xea, "Volume Down" },
     { "VOLUME_UP", 115, 0xc, 0xe9, "Volume Up" },
     { "BACK", 1, 0x7, 0x29, "Back / ESC" },

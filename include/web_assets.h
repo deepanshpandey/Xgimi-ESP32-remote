@@ -7,6 +7,7 @@
 static const char INDEX_HTML[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -208,7 +209,7 @@ body {
   height: 24px;
 }
 
-/* Top Bar (Power, Settings, Source, Mute) */
+/* Top Bar (Power, Focus, Misc Key, Source) */
 .top-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -235,44 +236,20 @@ body {
   background: #2d181b;
 }
 
+.btn-focus {
+  color: var(--google-blue);
+}
+
+.btn-focus:hover {
+  border-color: var(--border-focus);
+}
+
 .btn-misc {
   color: var(--google-yellow);
 }
 
-/* Autofocus Quick Action Button */
-.autofocus-container {
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.btn-autofocus {
-  width: 100%;
-  height: clamp(46px, 6.5vh, 54px);
-  border-radius: 27px;
-  gap: 10px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+.btn-source {
   color: var(--text-primary);
-  background: var(--surface-btn);
-  border: 1px solid var(--border-subtle);
-}
-
-.btn-autofocus .icon {
-  width: 22px;
-  height: 22px;
-}
-
-.btn-autofocus:hover {
-  background: var(--surface-btn-hover);
-  border-color: var(--border-focus);
-  color: #fff;
-}
-
-.btn-autofocus:active {
-  background: #1d2535;
-  border-color: var(--border-focus);
-  color: var(--google-blue);
 }
 
 /* Navigation D-Pad (Google TV Circular Pad) */
@@ -416,40 +393,49 @@ body {
   border-color: var(--border-focus);
 }
 
-/* Volume Control Bar */
+/* Volume Control Bar (Vol -, Mute, Vol +) */
 .volume-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
   align-items: center;
-  justify-content: space-between;
   background: #131417;
   border-radius: 28px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border: 1px solid var(--border-subtle);
   height: clamp(52px, 7.5vh, 62px);
   flex-shrink: 0;
 }
 
-.vol-indicator {
-  font-size: 0.72rem;
+.btn-vol, .btn-vol-mute {
+  height: clamp(40px, 5.8vh, 48px);
+  gap: 6px;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 2px;
+  border-radius: 22px;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-vol-mute {
   color: var(--text-secondary);
 }
 
-.btn-vol {
-  height: clamp(40px, 5.8vh, 48px);
-  padding: 0 22px;
-  gap: 8px;
-  font-size: 0.76rem;
-  font-weight: 600;
-  border-radius: 24px;
-  background: var(--surface-btn);
-  border: 1px solid var(--border-subtle);
+.btn-vol-mute:hover {
+  color: #fff;
+  border-color: #3d414d;
 }
 
-.btn-vol .icon {
-  width: 20px;
-  height: 20px;
+.btn-vol-mute:active {
+  color: var(--google-red);
+}
+
+.btn-vol .icon, .btn-vol-mute .icon {
+  width: 18px;
+  height: 18px;
 }
 
 /* Footer */
@@ -709,20 +695,27 @@ body {
   <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   <link rel="apple-touch-icon" href="/icon.svg" />
 </head>
+
 <body>
   <div class="remote-container">
     <!-- Header / Status Bar -->
     <header class="remote-header">
       <div class="brand">
         <span class="brand-title">XGIMI</span>
-        <span class="brand-sub">GOOGLE TV REMOTE</span>
+        <span class="brand-sub">ESP32 REMOTE</span>
       </div>
       <div class="header-actions">
         <button class="btn-icon" id="installPwaBtn" title="Install App (PWA)" style="display: none;">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04M17,13L12,18L7,13H10V9H14V13H17Z"/></svg>
+          <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor"
+              d="M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04M17,13L12,18L7,13H10V9H14V13H17Z" />
+          </svg>
         </button>
         <button class="btn-icon" id="openPairingBtn" title="Pairing & Accessories">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V13H13V7H11M11,15V17H13V15H11Z"/></svg>
+          <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor"
+              d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V13H13V7H11M11,15V17H13V15H11Z" />
+          </svg>
         </button>
         <div class="status-pill" id="statusPill">
           <span class="status-dot"></span>
@@ -731,27 +724,31 @@ body {
       </div>
     </header>
 
-    <!-- Top Action Buttons (Power, XGIMI Settings/Misc, Source, Mute) -->
+    <!-- Top Action Buttons (Power, Focus, XGIMI Settings/Misc, Input Source) -->
     <div class="top-bar">
       <button class="btn btn-power" data-action="KPPOWER" title="Power">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M13,3H11V13H13M17.83,5.17L16.41,6.59C18.05,7.91 19,9.9 19,12A7,7 0 0,1 12,19A7,7 0 0,1 5,12C5,9.9 5.95,7.91 7.58,6.58L6.17,5.17C4.21,6.82 3,9.26 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12C21,9.26 19.79,6.82 17.83,5.17Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M13,3H11V13H13M17.83,5.17L16.41,6.59C18.05,7.91 19,9.9 19,12A7,7 0 0,1 12,19A7,7 0 0,1 5,12C5,9.9 5.95,7.91 7.58,6.58L6.17,5.17C4.21,6.82 3,9.26 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12C21,9.26 19.79,6.82 17.83,5.17Z" />
+        </svg>
+      </button>
+      <button class="btn btn-focus" data-action="FOCUS_AUTO" title="Autofocus">
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z" />
+        </svg>
       </button>
       <button class="btn btn-misc" data-action="XGIMI_MISCKEY" title="XGIMI Settings (Misc Key)">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+        </svg>
       </button>
-      <button class="btn" data-action="XGIMI_SOURCE" title="Input Source">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3M21,19H3V5H21V19M16,16L20,12L16,8V11H8V13H16V16Z"/></svg>
-      </button>
-      <button class="btn" data-action="KPPOWER" title="Mute Toggle">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.48,12.43 16.5,12.21 16.5,12Z"/></svg>
-      </button>
-    </div>
-
-    <!-- Quick Autofocus Button (Google TV Pill Style) -->
-    <div class="autofocus-container">
-      <button class="btn btn-autofocus" data-action="FOCUS_AUTO" title="Autofocus Projector">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
-        <span>AUTOFOCUS</span>
+      <button class="btn btn-source" data-action="XGIMI_SOURCE" title="Input Source">
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3M21,19H3V5H21V19M16,16L20,12L16,8V11H8V13H16V16Z" />
+        </svg>
       </button>
     </div>
 
@@ -759,19 +756,27 @@ body {
     <div class="dpad-wrapper">
       <div class="dpad-ring">
         <button class="dpad-btn dpad-up" data-action="DPAD_UP" title="Up">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"/></svg>
+          <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor" d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+          </svg>
         </button>
         <button class="dpad-btn dpad-left" data-action="DPAD_LEFT" title="Left">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/></svg>
+          <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+          </svg>
         </button>
         <button class="dpad-btn dpad-center" data-action="DPAD_CENTER" title="OK / Select">
           <span>OK</span>
         </button>
         <button class="dpad-btn dpad-right" data-action="DPAD_RIGHT" title="Right">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>
+          <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+          </svg>
         </button>
         <button class="dpad-btn dpad-down" data-action="DPAD_DOWN" title="Down">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+          <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+          </svg>
         </button>
       </div>
     </div>
@@ -779,35 +784,55 @@ body {
     <!-- Android / Remote Function Keys (Back, Home, Menu, Voice) -->
     <div class="function-row">
       <button class="btn btn-pill" data-action="BACK" title="Back">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M20,11H7.83L13.42,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor" d="M20,11H7.83L13.42,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z" />
+        </svg>
         <span>BACK</span>
       </button>
 
       <button class="btn btn-pill" data-action="HOME" title="Home">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+        </svg>
         <span>HOME</span>
       </button>
 
       <button class="btn btn-pill" data-action="MENU" title="Menu">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+        </svg>
         <span>MENU</span>
       </button>
 
       <button class="btn btn-pill btn-voice" data-action="VOICE_ASSIST" title="Voice Assistant">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+        </svg>
         <span>VOICE</span>
       </button>
     </div>
 
-    <!-- Volume Control Bar -->
+    <!-- Volume Control Bar (Vol -, Mute, Vol +) -->
     <div class="volume-bar">
       <button class="btn btn-vol" data-action="VOLUME_DOWN" title="Volume Down">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M5,9V15H9L14,20V4L9,9H5M11,15.83L8.83,13.66H7V10.34H8.83L11,8.17V15.83Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor" d="M5,9V15H9L14,20V4L9,9H5M11,15.83L8.83,13.66H7V10.34H8.83L11,8.17V15.83Z" />
+        </svg>
         <span>VOL -</span>
       </button>
-      <div class="vol-indicator">VOLUME</div>
+      <button class="btn btn-vol-mute" data-action="MUTE" title="Mute Toggle">
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" />
+        </svg>
+        <span>MUTE</span>
+      </button>
       <button class="btn btn-vol" data-action="VOLUME_UP" title="Volume Up">
-        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path fill="currentColor"
+            d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" />
+        </svg>
         <span>VOL +</span>
       </button>
     </div>
@@ -844,12 +869,18 @@ body {
         <div class="action-section">
           <span class="section-title">BLUETOOTH REMOTE PAIRING</span>
           <button class="btn btn-modal btn-action-primary" id="startPairingBtn">
-            <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V13H13V7H11M11,15V17H13V15H11Z"/></svg>
+            <svg viewBox="0 0 24 24" class="icon">
+              <path fill="currentColor"
+                d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V13H13V7H11M11,15V17H13V15H11Z" />
+            </svg>
             <span>Start BLE Pairing Mode</span>
           </button>
-          
+
           <button class="btn btn-modal btn-action-danger" id="clearBondsBtn">
-            <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
+            <svg viewBox="0 0 24 24" class="icon">
+              <path fill="currentColor"
+                d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+            </svg>
             <span>Clear Saved Bluetooth Bonds</span>
           </button>
         </div>
@@ -1205,10 +1236,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 </body>
-</html>
 
+</html>
 )rawliteral";
-static const size_t INDEX_HTML_LEN = 35357;
+static const size_t INDEX_HTML_LEN = 35473;
 
 static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
 {

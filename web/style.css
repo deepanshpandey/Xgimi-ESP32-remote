@@ -191,7 +191,7 @@ body {
   height: 24px;
 }
 
-/* Top Bar (Power, Settings, Source, Mute) */
+/* Top Bar (Power, Focus, Misc Key, Source) */
 .top-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -218,44 +218,20 @@ body {
   background: #2d181b;
 }
 
+.btn-focus {
+  color: var(--google-blue);
+}
+
+.btn-focus:hover {
+  border-color: var(--border-focus);
+}
+
 .btn-misc {
   color: var(--google-yellow);
 }
 
-/* Autofocus Quick Action Button */
-.autofocus-container {
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.btn-autofocus {
-  width: 100%;
-  height: clamp(46px, 6.5vh, 54px);
-  border-radius: 27px;
-  gap: 10px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+.btn-source {
   color: var(--text-primary);
-  background: var(--surface-btn);
-  border: 1px solid var(--border-subtle);
-}
-
-.btn-autofocus .icon {
-  width: 22px;
-  height: 22px;
-}
-
-.btn-autofocus:hover {
-  background: var(--surface-btn-hover);
-  border-color: var(--border-focus);
-  color: #fff;
-}
-
-.btn-autofocus:active {
-  background: #1d2535;
-  border-color: var(--border-focus);
-  color: var(--google-blue);
 }
 
 /* Navigation D-Pad (Google TV Circular Pad) */
@@ -399,40 +375,49 @@ body {
   border-color: var(--border-focus);
 }
 
-/* Volume Control Bar */
+/* Volume Control Bar (Vol -, Mute, Vol +) */
 .volume-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
   align-items: center;
-  justify-content: space-between;
   background: #131417;
   border-radius: 28px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border: 1px solid var(--border-subtle);
   height: clamp(52px, 7.5vh, 62px);
   flex-shrink: 0;
 }
 
-.vol-indicator {
-  font-size: 0.72rem;
+.btn-vol, .btn-vol-mute {
+  height: clamp(40px, 5.8vh, 48px);
+  gap: 6px;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 2px;
+  border-radius: 22px;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-vol-mute {
   color: var(--text-secondary);
 }
 
-.btn-vol {
-  height: clamp(40px, 5.8vh, 48px);
-  padding: 0 22px;
-  gap: 8px;
-  font-size: 0.76rem;
-  font-weight: 600;
-  border-radius: 24px;
-  background: var(--surface-btn);
-  border: 1px solid var(--border-subtle);
+.btn-vol-mute:hover {
+  color: #fff;
+  border-color: #3d414d;
 }
 
-.btn-vol .icon {
-  width: 20px;
-  height: 20px;
+.btn-vol-mute:active {
+  color: var(--google-red);
+}
+
+.btn-vol .icon, .btn-vol-mute .icon {
+  width: 18px;
+  height: 18px;
 }
 
 /* Footer */
