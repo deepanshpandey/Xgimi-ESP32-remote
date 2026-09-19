@@ -24,6 +24,8 @@ bool connectHomeWiFi(const String& ssid, const String& password) {
     prefs.end();
 
     Serial.printf("[Wi-Fi] Connecting to Home Wi-Fi: '%s'...\n", ssid.c_str());
+    WiFi.disconnect(false, false);
+    delay(100);
     WiFi.begin(ssid.c_str(), password.c_str());
 
     unsigned long start = millis();

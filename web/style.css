@@ -375,11 +375,11 @@ body {
   border-color: var(--border-focus);
 }
 
-/* Volume Control Bar (Vol -, Mute, Vol +) */
+/* Volume Control Bar (Vol -, Vol +) */
 .volume-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
   align-items: center;
   background: #131417;
   border-radius: 28px;
@@ -389,10 +389,10 @@ body {
   flex-shrink: 0;
 }
 
-.btn-vol, .btn-vol-mute {
+.btn-vol {
   height: clamp(40px, 5.8vh, 48px);
-  gap: 6px;
-  font-size: 0.74rem;
+  gap: 8px;
+  font-size: 0.78rem;
   font-weight: 600;
   border-radius: 22px;
   background: var(--surface-btn);
@@ -402,22 +402,13 @@ body {
   justify-content: center;
 }
 
-.btn-vol-mute {
-  color: var(--text-secondary);
-}
-
-.btn-vol-mute:hover {
-  color: #fff;
+.btn-vol:hover {
   border-color: #3d414d;
 }
 
-.btn-vol-mute:active {
-  color: var(--google-red);
-}
-
-.btn-vol .icon, .btn-vol-mute .icon {
-  width: 18px;
-  height: 18px;
+.btn-vol .icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* Footer */

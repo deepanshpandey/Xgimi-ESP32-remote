@@ -393,11 +393,11 @@ body {
   border-color: var(--border-focus);
 }
 
-/* Volume Control Bar (Vol -, Mute, Vol +) */
+/* Volume Control Bar (Vol -, Vol +) */
 .volume-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
   align-items: center;
   background: #131417;
   border-radius: 28px;
@@ -407,10 +407,10 @@ body {
   flex-shrink: 0;
 }
 
-.btn-vol, .btn-vol-mute {
+.btn-vol {
   height: clamp(40px, 5.8vh, 48px);
-  gap: 6px;
-  font-size: 0.74rem;
+  gap: 8px;
+  font-size: 0.78rem;
   font-weight: 600;
   border-radius: 22px;
   background: var(--surface-btn);
@@ -420,22 +420,13 @@ body {
   justify-content: center;
 }
 
-.btn-vol-mute {
-  color: var(--text-secondary);
-}
-
-.btn-vol-mute:hover {
-  color: #fff;
+.btn-vol:hover {
   border-color: #3d414d;
 }
 
-.btn-vol-mute:active {
-  color: var(--google-red);
-}
-
-.btn-vol .icon, .btn-vol-mute .icon {
-  width: 18px;
-  height: 18px;
+.btn-vol .icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* Footer */
@@ -813,20 +804,13 @@ body {
       </button>
     </div>
 
-    <!-- Volume Control Bar (Vol -, Mute, Vol +) -->
+    <!-- Volume Control Bar (Vol -, Vol +) -->
     <div class="volume-bar">
       <button class="btn btn-vol" data-action="VOLUME_DOWN" title="Volume Down">
         <svg viewBox="0 0 24 24" class="icon">
           <path fill="currentColor" d="M5,9V15H9L14,20V4L9,9H5M11,15.83L8.83,13.66H7V10.34H8.83L11,8.17V15.83Z" />
         </svg>
         <span>VOL -</span>
-      </button>
-      <button class="btn btn-vol-mute" data-action="MUTE" title="Mute Toggle">
-        <svg viewBox="0 0 24 24" class="icon">
-          <path fill="currentColor"
-            d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" />
-        </svg>
-        <span>MUTE</span>
       </button>
       <button class="btn btn-vol" data-action="VOLUME_UP" title="Volume Up">
         <svg viewBox="0 0 24 24" class="icon">
@@ -1284,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </html>
 )rawliteral";
-static const size_t INDEX_HTML_LEN = 36973;
+static const size_t INDEX_HTML_LEN = 36156;
 
 static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
 {
