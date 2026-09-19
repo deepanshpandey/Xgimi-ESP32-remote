@@ -8,18 +8,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0b0d13" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="XGIMI Remote" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
 </head>
 <body>
-  <div class="background-glow"></div>
-  
   <div class="remote-container">
     <!-- Header / Status Bar -->
     <header class="remote-header">
       <div class="brand">
         <span class="brand-title">XGIMI</span>
-        <span class="brand-sub">BLE REMOTE</span>
+        <span class="brand-sub">GOOGLE TV REMOTE</span>
       </div>
       <div class="header-actions">
+        <button class="btn-icon" id="installPwaBtn" title="Install App (PWA)" style="display: none;">
+          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04M17,13L12,18L7,13H10V9H14V13H17Z"/></svg>
+        </button>
         <button class="btn-icon" id="openPairingBtn" title="Pairing & Accessories">
           <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V13H13V7H11M11,15V17H13V15H11Z"/></svg>
         </button>
@@ -30,49 +38,29 @@
       </div>
     </header>
 
-    <!-- Top Action Buttons (Power, Settings, Source, Mute) -->
+    <!-- Top Action Buttons (Power, XGIMI Settings/Misc, Source, Mute) -->
     <div class="top-bar">
       <button class="btn btn-power" data-action="KPPOWER" title="Power">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M13,3H11V13H13M17.83,5.17L16.41,6.59C18.05,7.91 19,9.9 19,12A7,7 0 0,1 12,19A7,7 0 0,1 5,12C5,9.9 5.95,7.91 7.58,6.58L6.17,5.17C4.21,6.82 3,9.26 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12C21,9.26 19.79,6.82 17.83,5.17Z"/></svg>
       </button>
-      <button class="btn btn-glass" data-action="XGIMI_MISCKEY" title="Projector Settings">
+      <button class="btn btn-misc" data-action="XGIMI_MISCKEY" title="XGIMI Settings (Misc Key)">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/></svg>
       </button>
-      <button class="btn btn-glass" data-action="XGIMI_SOURCE" title="Input Source">
+      <button class="btn" data-action="XGIMI_SOURCE" title="Input Source">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3M21,19H3V5H21V19M16,16L20,12L16,8V11H8V13H16V16Z"/></svg>
       </button>
-      <button class="btn btn-glass" data-action="KPPOWER" title="Mute Toggle">
+      <button class="btn" data-action="KPPOWER" title="Mute Toggle">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.48,12.43 16.5,12.21 16.5,12Z"/></svg>
       </button>
     </div>
 
-    <!-- Special XGIMI Focus Control Panel -->
-    <section class="focus-card">
-      <div class="card-header">
-        <span class="card-title">XGIMI FOCUS ENGINE</span>
-      </div>
-      <div class="focus-grid">
-        <button class="btn btn-accent btn-autofocus" data-action="FOCUS_AUTO">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
-          <span>AUTOFOCUS</span>
-        </button>
-
-        <button class="btn btn-secondary btn-manualfocus" data-action="FOCUS_MAN_NEW">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17Z"/></svg>
-          <span>MANUAL FOCUS</span>
-        </button>
-
-        <button class="btn btn-stepper" data-action="FOCUS_LEFT" title="Focus Left">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/></svg>
-          <span>FOCUS -</span>
-        </button>
-
-        <button class="btn btn-stepper" data-action="FOCUS_RIGHT" title="Focus Right">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>
-          <span>FOCUS +</span>
-        </button>
-      </div>
-    </section>
+    <!-- Quick Autofocus Button (Google TV Pill Style) -->
+    <div class="autofocus-container">
+      <button class="btn btn-autofocus" data-action="FOCUS_AUTO" title="Autofocus Projector">
+        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
+        <span>AUTOFOCUS</span>
+      </button>
+    </div>
 
     <!-- Navigation D-Pad Ring -->
     <div class="dpad-wrapper">
@@ -179,6 +167,9 @@
           <div class="pin-input-group">
             <input type="text" id="pinInput" maxlength="6" placeholder="Enter PIN code" autocomplete="off" />
             <button class="btn btn-modal btn-action-primary" id="submitPinBtn">Pair PIN</button>
+          </div>
+        </div>
+
         <!-- Home Wi-Fi Network Setup -->
         <div class="action-section">
           <span class="section-title">CONNECT TO HOME WI-FI</span>

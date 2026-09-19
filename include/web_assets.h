@@ -16,22 +16,22 @@ static const char INDEX_HTML[] PROGMEM = R"rawliteral(
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
 :root {
-  --bg-color: #0b0d13;
-  --panel-bg: rgba(22, 27, 38, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --accent-cyan: #00f2fe;
-  --accent-blue: #4facfe;
-  --accent-purple: #7f53ac;
-  --accent-magenta: #647eee;
-  --accent-red: #ff4b4b;
-  --accent-green: #00e676;
-  --text-main: #f0f3f8;
-  --text-muted: #8a94a6;
-  --btn-glass: rgba(255, 255, 255, 0.06);
-  --btn-glass-hover: rgba(255, 255, 255, 0.12);
-  --btn-glass-active: rgba(0, 242, 254, 0.25);
-  --shadow-glow: 0 0 25px rgba(0, 242, 254, 0.2);
-  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-color: #000000;
+  --surface-remote: #000000;
+  --surface-card: #121316;
+  --surface-btn: #18191d;
+  --surface-btn-hover: #202227;
+  --surface-btn-active: #2b2e36;
+  --border-subtle: #24262d;
+  --border-focus: #8ab4f8;
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-tertiary: #5f6368;
+  --google-blue: #8ab4f8;
+  --google-red: #f28b82;
+  --google-green: #34a853;
+  --google-yellow: #fdd663;
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Google Sans', Roboto, sans-serif;
 }
 
 * {
@@ -42,48 +42,55 @@ static const char INDEX_HTML[] PROGMEM = R"rawliteral(
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
+  height: 100%;
+  width: 100%;
   background-color: var(--bg-color);
-  color: var(--text-main);
+  color: var(--text-primary);
   font-family: var(--font-family);
+  overflow-x: hidden;
+}
+
+body {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow-x: hidden;
-  padding: 16px;
+  align-items: stretch;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
 
-/* Background Ambient Glow */
-.background-glow {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 350px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(79, 172, 254, 0.15) 0%, rgba(127, 83, 172, 0.1) 40%, rgba(11, 13, 19, 0) 70%);
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(40px);
-}
-
-/* Remote Outer Container */
+/* Remote Container - Full Screen Space Utilization */
 .remote-container {
   position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 400px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 32px;
-  padding: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  max-width: 480px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--surface-remote);
+  padding: 18px 20px 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+/* On wider screens/desktops, give it a sleek framed appearance */
+@media (min-width: 600px) {
+  body {
+    padding: 24px 16px;
+    align-items: center;
+  }
+  
+  .remote-container {
+    min-height: 880px;
+    height: 92vh;
+    border: 1px solid var(--border-subtle);
+    border-radius: 44px;
+    padding: 28px 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+  }
 }
 
 /* Header */
@@ -91,6 +98,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 4px 6px;
+  flex-shrink: 0;
 }
 
 .brand {
@@ -101,18 +110,15 @@ body {
 .brand-title {
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: 2px;
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
 }
 
 .brand-sub {
   font-size: 0.65rem;
   font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+  letter-spacing: 1.2px;
 }
 
 .header-actions {
@@ -122,188 +128,171 @@ body {
 }
 
 .btn-icon {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--accent-cyan);
-  width: 36px;
-  height: 36px;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .btn-icon:hover {
-  background: rgba(0, 242, 254, 0.2);
-  transform: scale(1.05);
+  background: var(--surface-btn-hover);
+}
+
+.btn-icon:active {
+  background: var(--surface-btn-active);
+  transform: scale(0.94);
 }
 
 .status-pill {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 14px;
+  border-radius: 22px;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
   font-size: 0.75rem;
   font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #ffb703;
-  box-shadow: 0 0 8px #ffb703;
-  transition: background-color 0.3s, box-shadow 0.3s;
+  background-color: var(--google-yellow);
 }
 
 .status-pill.connected .status-dot {
-  background-color: var(--accent-green);
-  box-shadow: 0 0 10px var(--accent-green);
+  background-color: var(--google-green);
 }
 
 .status-pill.disconnected .status-dot {
-  background-color: var(--accent-red);
-  box-shadow: 0 0 10px var(--accent-red);
+  background-color: var(--google-red);
 }
 
-/* Buttons Base */
+/* Base Buttons - Minimalist Google TV Style */
 .btn {
-  border: none;
+  border: 1px solid var(--border-subtle);
   outline: none;
   cursor: pointer;
-  border-radius: 16px;
-  background: var(--btn-glass);
-  color: var(--text-main);
+  border-radius: 20px;
+  background: var(--surface-btn);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--glass-border);
+  transition: background 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
 }
 
 .btn:hover {
-  background: var(--btn-glass-hover);
-  transform: translateY(-2px);
+  background: var(--surface-btn-hover);
+  border-color: #32353e;
 }
 
 .btn:active, .btn.active {
-  transform: translateY(1px) scale(0.96);
-  background: var(--btn-glass-active);
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+  background: var(--surface-btn-active);
+  transform: scale(0.95);
+  border-color: #40434e;
 }
 
 .icon {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
-/* Top Bar */
+/* Top Bar (Power, Settings, Source, Mute) */
 .top-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .top-bar .btn {
-  height: 52px;
+  height: clamp(52px, 7.5vh, 62px);
 }
 
 .btn-power {
-  background: rgba(255, 75, 75, 0.15);
-  color: var(--accent-red);
-  border-color: rgba(255, 75, 75, 0.3);
+  color: var(--google-red);
+  background: #171213;
+  border-color: #321e20;
 }
 
 .btn-power:hover {
-  background: rgba(255, 75, 75, 0.25);
-  box-shadow: 0 0 15px rgba(255, 75, 75, 0.4);
+  background: #221618;
+  border-color: #452427;
 }
 
-/* Focus Engine Section */
-.focus-card {
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-  padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.btn-power:active {
+  background: #2d181b;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.btn-misc {
+  color: var(--google-yellow);
 }
 
-.card-title {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--accent-cyan);
-}
-
-.focus-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+/* Autofocus Quick Action Button */
+.autofocus-container {
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .btn-autofocus {
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(79, 172, 254, 0.2));
-  border: 1px solid rgba(0, 242, 254, 0.4);
-  color: #fff;
-  height: 48px;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1px;
+  width: 100%;
+  height: clamp(46px, 6.5vh, 54px);
+  border-radius: 27px;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-autofocus .icon {
+  width: 22px;
+  height: 22px;
 }
 
 .btn-autofocus:hover {
-  box-shadow: var(--shadow-glow);
-}
-
-.btn-manualfocus {
-  background: linear-gradient(135deg, rgba(127, 83, 172, 0.2), rgba(100, 126, 238, 0.2));
-  border: 1px solid rgba(127, 83, 172, 0.4);
+  background: var(--surface-btn-hover);
+  border-color: var(--border-focus);
   color: #fff;
-  height: 48px;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1px;
 }
 
-.btn-stepper {
-  height: 42px;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
+.btn-autofocus:active {
+  background: #1d2535;
+  border-color: var(--border-focus);
+  color: var(--google-blue);
 }
 
-/* D-Pad Ring */
+/* Navigation D-Pad (Google TV Circular Pad) */
 .dpad-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;
+  padding: 8px 0;
+  flex: 1;
+  min-height: 250px;
+  max-height: 350px;
 }
 
 .dpad-ring {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: clamp(230px, 68vw, 290px);
+  height: clamp(230px, 68vw, 290px);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  background: #131417;
+  border: 1px solid var(--border-subtle);
 }
 
 .dpad-btn {
@@ -311,105 +300,120 @@ body {
   border: none;
   outline: none;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
+  background: transparent;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.dpad-btn .icon {
+  width: 28px;
+  height: 28px;
 }
 
 .dpad-btn:hover {
-  background: rgba(0, 242, 254, 0.2);
-  color: var(--accent-cyan);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .dpad-btn:active {
-  transform: scale(0.92);
-  background: var(--accent-cyan);
-  color: #000;
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
 }
 
 .dpad-up {
-  top: 6px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
-  height: 50px;
-  border-radius: 30px 30px 10px 10px;
+  width: clamp(74px, 22vw, 94px);
+  height: clamp(58px, 16vw, 74px);
+  border-radius: 38px 38px 14px 14px;
 }
 
 .dpad-down {
-  bottom: 6px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
-  height: 50px;
-  border-radius: 10px 10px 30px 30px;
+  width: clamp(74px, 22vw, 94px);
+  height: clamp(58px, 16vw, 74px);
+  border-radius: 14px 14px 38px 38px;
 }
 
 .dpad-left {
-  left: 6px;
+  left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  width: 50px;
-  height: 60px;
-  border-radius: 30px 10px 10px 30px;
+  width: clamp(58px, 16vw, 74px);
+  height: clamp(74px, 22vw, 94px);
+  border-radius: 38px 14px 14px 38px;
 }
 
 .dpad-right {
-  right: 6px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  width: 50px;
-  height: 60px;
-  border-radius: 10px 30px 30px 10px;
+  width: clamp(58px, 16vw, 74px);
+  height: clamp(74px, 22vw, 94px);
+  border-radius: 14px 38px 38px 14px;
 }
 
 .dpad-center {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 68px;
-  height: 68px;
+  width: clamp(82px, 24vw, 102px);
+  height: clamp(82px, 24vw, 102px);
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
+  background: #202227;
+  border: 1px solid #2e313a;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  transition: transform 0.12s ease, background 0.12s ease;
 }
 
 .dpad-center:hover {
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-  color: #000;
+  background: #282a31;
+  color: #fff;
 }
 
-/* Function Buttons (Back, Home, Menu, Voice) */
+.dpad-center:active {
+  transform: translate(-50%, -50%) scale(0.93);
+  background: #31353f;
+}
+
+/* Function Row (Back, Home, Menu, Voice) */
 .function-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-pill {
-  height: 46px;
+  height: clamp(54px, 7.8vh, 66px);
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.5px;
+  border-radius: 20px;
 }
 
 .btn-pill .icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .btn-voice {
-  color: var(--accent-cyan);
-  border-color: rgba(0, 242, 254, 0.2);
+  color: var(--google-blue);
+}
+
+.btn-voice:hover {
+  border-color: var(--border-focus);
 }
 
 /* Volume Control Bar */
@@ -417,52 +421,64 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  padding: 6px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #131417;
+  border-radius: 28px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-subtle);
+  height: clamp(52px, 7.5vh, 62px);
+  flex-shrink: 0;
 }
 
 .vol-indicator {
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 2px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .btn-vol {
-  height: 42px;
-  padding: 0 16px;
-  gap: 6px;
-  font-size: 0.75rem;
+  height: clamp(40px, 5.8vh, 48px);
+  padding: 0 22px;
+  gap: 8px;
+  font-size: 0.76rem;
   font-weight: 600;
+  border-radius: 24px;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-vol .icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* Footer */
 .remote-footer {
   text-align: center;
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  letter-spacing: 1px;
+  font-size: 0.68rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.8px;
+  padding-top: 4px;
+  flex-shrink: 0;
 }
 
-/* Modal Overlay & Card */
+/* Modal Overlay & Card (Google TV Dark Sheet) */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
   padding: 16px;
 }
 
@@ -473,49 +489,77 @@ body {
 
 .modal-card {
   width: 100%;
-  max-width: 380px;
-  background: var(--panel-bg);
-  border: 1px solid var(--glass-border);
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 28px;
-  padding: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: #33363f transparent;
+}
+
+.modal-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-card::-webkit-scrollbar-thumb {
+  background: #33363f;
+  border-radius: 3px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #1f2127;
+  padding-bottom: 12px;
 }
 
 .modal-title {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--accent-cyan);
+  letter-spacing: 1.2px;
+  color: var(--text-primary);
 }
 
 .btn-close {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.5rem;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  line-height: 1;
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-close:hover {
+  color: #fff;
+  background: var(--surface-btn-hover);
 }
 
 .modal-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .pair-status-box {
-  background: rgba(0, 0, 0, 0.3);
+  background: #18191e;
   border-radius: 16px;
   padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -530,21 +574,21 @@ body {
 }
 
 .status-indicator-dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background-color: #ffb703;
+  background-color: var(--google-yellow);
 }
 
 .pair-info-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.76rem;
+  color: var(--text-secondary);
 }
 
 .pair-info-row strong {
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .action-section {
@@ -557,88 +601,126 @@ body {
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 1px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .btn-modal {
   width: 100%;
-  height: 44px;
-  border-radius: 14px;
+  height: 46px;
+  border-radius: 16px;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   gap: 8px;
+  background: var(--surface-btn);
+  border: 1px solid var(--border-subtle);
 }
 
 .btn-action-primary {
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(79, 172, 254, 0.2));
-  border: 1px solid rgba(0, 242, 254, 0.3);
-  color: #fff;
+  background: #172030;
+  border: 1px solid #2d3e5c;
+  color: var(--google-blue);
+}
+
+.btn-action-primary:hover {
+  background: #1d283c;
+  border-color: var(--google-blue);
 }
 
 .btn-action-danger {
-  background: rgba(255, 75, 75, 0.15);
-  border: 1px solid rgba(255, 75, 75, 0.3);
-  color: var(--accent-red);
+  background: #241416;
+  border: 1px solid #482326;
+  color: var(--google-red);
+}
+
+.btn-action-danger:hover {
+  background: #2f181b;
+  border-color: var(--google-red);
 }
 
 .pin-input-group {
   display: flex;
   gap: 8px;
+  width: 100%;
 }
 
 .pin-input-group input {
   flex: 1;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 0 12px;
-  color: #fff;
+  min-width: 0;
+  height: 46px;
+  background: #18191e;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 0 14px;
+  color: var(--text-primary);
   font-family: var(--font-family);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   letter-spacing: 2px;
   outline: none;
+  transition: border-color 0.15s ease;
 }
 
 .pin-input-group input:focus {
-  border-color: var(--accent-cyan);
+  border-color: var(--border-focus);
+}
+
+.pin-input-group .btn-modal {
+  width: auto;
+  min-width: 105px;
+  height: 46px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .wifi-input-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 }
 
 .wifi-input-group input {
   width: 100%;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 0 12px;
-  color: #fff;
+  height: 44px;
+  background: #18191e;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 0 14px;
+  color: var(--text-primary);
   font-family: var(--font-family);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   outline: none;
+  transition: border-color 0.15s ease;
 }
 
 .wifi-input-group input:focus {
-  border-color: var(--accent-cyan);
+  border-color: var(--border-focus);
+}
+
+.wifi-input-group .btn-modal {
+  margin-top: 4px;
 }
 
 </style>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0b0d13" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="XGIMI Remote" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
 </head>
 <body>
-  <div class="background-glow"></div>
-  
   <div class="remote-container">
     <!-- Header / Status Bar -->
     <header class="remote-header">
       <div class="brand">
         <span class="brand-title">XGIMI</span>
-        <span class="brand-sub">BLE REMOTE</span>
+        <span class="brand-sub">GOOGLE TV REMOTE</span>
       </div>
       <div class="header-actions">
+        <button class="btn-icon" id="installPwaBtn" title="Install App (PWA)" style="display: none;">
+          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04M17,13L12,18L7,13H10V9H14V13H17Z"/></svg>
+        </button>
         <button class="btn-icon" id="openPairingBtn" title="Pairing & Accessories">
           <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V13H13V7H11M11,15V17H13V15H11Z"/></svg>
         </button>
@@ -649,49 +731,29 @@ body {
       </div>
     </header>
 
-    <!-- Top Action Buttons (Power, Settings, Source, Mute) -->
+    <!-- Top Action Buttons (Power, XGIMI Settings/Misc, Source, Mute) -->
     <div class="top-bar">
       <button class="btn btn-power" data-action="KPPOWER" title="Power">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M13,3H11V13H13M17.83,5.17L16.41,6.59C18.05,7.91 19,9.9 19,12A7,7 0 0,1 12,19A7,7 0 0,1 5,12C5,9.9 5.95,7.91 7.58,6.58L6.17,5.17C4.21,6.82 3,9.26 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12C21,9.26 19.79,6.82 17.83,5.17Z"/></svg>
       </button>
-      <button class="btn btn-glass" data-action="XGIMI_MISCKEY" title="Projector Settings">
+      <button class="btn btn-misc" data-action="XGIMI_MISCKEY" title="XGIMI Settings (Misc Key)">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/></svg>
       </button>
-      <button class="btn btn-glass" data-action="XGIMI_SOURCE" title="Input Source">
+      <button class="btn" data-action="XGIMI_SOURCE" title="Input Source">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3M21,19H3V5H21V19M16,16L20,12L16,8V11H8V13H16V16Z"/></svg>
       </button>
-      <button class="btn btn-glass" data-action="KPPOWER" title="Mute Toggle">
+      <button class="btn" data-action="KPPOWER" title="Mute Toggle">
         <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.48,12.43 16.5,12.21 16.5,12Z"/></svg>
       </button>
     </div>
 
-    <!-- Special XGIMI Focus Control Panel -->
-    <section class="focus-card">
-      <div class="card-header">
-        <span class="card-title">XGIMI FOCUS ENGINE</span>
-      </div>
-      <div class="focus-grid">
-        <button class="btn btn-accent btn-autofocus" data-action="FOCUS_AUTO">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
-          <span>AUTOFOCUS</span>
-        </button>
-
-        <button class="btn btn-secondary btn-manualfocus" data-action="FOCUS_MAN_NEW">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17Z"/></svg>
-          <span>MANUAL FOCUS</span>
-        </button>
-
-        <button class="btn btn-stepper" data-action="FOCUS_LEFT" title="Focus Left">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/></svg>
-          <span>FOCUS -</span>
-        </button>
-
-        <button class="btn btn-stepper" data-action="FOCUS_RIGHT" title="Focus Right">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>
-          <span>FOCUS +</span>
-        </button>
-      </div>
-    </section>
+    <!-- Quick Autofocus Button (Google TV Pill Style) -->
+    <div class="autofocus-container">
+      <button class="btn btn-autofocus" data-action="FOCUS_AUTO" title="Autofocus Projector">
+        <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
+        <span>AUTOFOCUS</span>
+      </button>
+    </div>
 
     <!-- Navigation D-Pad Ring -->
     <div class="dpad-wrapper">
@@ -798,6 +860,9 @@ body {
           <div class="pin-input-group">
             <input type="text" id="pinInput" maxlength="6" placeholder="Enter PIN code" autocomplete="off" />
             <button class="btn btn-modal btn-action-primary" id="submitPinBtn">Pair PIN</button>
+          </div>
+        </div>
+
         <!-- Home Wi-Fi Network Setup -->
         <div class="action-section">
           <span class="section-title">CONNECT TO HOME WI-FI</span>
@@ -835,9 +900,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearBondsBtn = document.getElementById('clearBondsBtn');
   const pinInput = document.getElementById('pinInput');
   const submitPinBtn = document.getElementById('submitPinBtn');
+  const installPwaBtn = document.getElementById('installPwaBtn');
 
+  let deferredPrompt = null;
   let socket = null;
   let isConnected = false;
+
+  // PWA Service Worker Registration & Install Prompt
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[PWA] ServiceWorker registered:', reg.scope))
+        .catch(err => console.log('[PWA] ServiceWorker failed:', err));
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installPwaBtn) {
+      installPwaBtn.style.display = 'flex';
+    }
+  });
+
+  if (installPwaBtn) {
+    installPwaBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] User choice:', outcome);
+        deferredPrompt = null;
+        installPwaBtn.style.display = 'none';
+      } else {
+        alert('To install on iPhone/iPad: Tap the Share icon (box with up arrow) in Safari and tap "Add to Home Screen".');
+      }
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    console.log('[PWA] App successfully installed');
+    if (installPwaBtn) {
+      installPwaBtn.style.display = 'none';
+    }
+  });
 
   // Initialize WebSocket or HTTP polling fallback
   function initConnection() {
@@ -1103,5 +1208,135 @@ document.addEventListener('DOMContentLoaded', () => {
 </html>
 
 )rawliteral";
+static const size_t INDEX_HTML_LEN = 35357;
+
+static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
+{
+  "name": "XGIMI Remote",
+  "short_name": "XGIMI Remote",
+  "description": "ESP32 Bluetooth Remote for XGIMI Projector",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b0d13",
+  "theme_color": "#0b0d13",
+  "categories": ["utilities", "entertainment"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
+
+)rawliteral";
+static const size_t MANIFEST_JSON_LEN = 589;
+
+static const char SW_JS[] PROGMEM = R"rawliteral(
+const CACHE_NAME = 'xgimi-remote-v1';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/manifest.json',
+  '/icon.svg'
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    }).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  // Pass WebSocket and API requests directly to network
+  if (event.request.url.includes('/api/') || event.request.url.includes('/ws')) {
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          return cachedResponse || caches.match('/');
+        });
+      })
+  );
+});
+
+)rawliteral";
+static const size_t SW_JS_LEN = 1328;
+
+static const char ICON_SVG[] PROGMEM = R"rawliteral(
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#161b26"/>
+      <stop offset="100%" stop-color="#0b0d13"/>
+    </radialGradient>
+    <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#4facfe"/>
+    </linearGradient>
+    <linearGradient id="neonPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7f53ac"/>
+      <stop offset="100%" stop-color="#647eee"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="110" fill="url(#bgGrad)" />
+  <rect width="500" height="500" x="6" y="6" rx="104" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+
+  <!-- Glowing Outer Ring -->
+  <circle cx="256" cy="220" r="140" fill="none" stroke="url(#neonCyan)" stroke-width="12" opacity="0.4" filter="url(#glow)"/>
+  <circle cx="256" cy="220" r="140" fill="none" stroke="url(#neonCyan)" stroke-width="6" />
+
+  <!-- Inner Projector Lens Rings -->
+  <circle cx="256" cy="220" r="105" fill="none" stroke="url(#neonPurple)" stroke-width="8" opacity="0.6"/>
+  <circle cx="256" cy="220" r="70" fill="rgba(0, 242, 254, 0.15)"/>
+  <circle cx="256" cy="220" r="45" fill="url(#neonCyan)"/>
+  <circle cx="240" cy="204" r="15" fill="#ffffff" opacity="0.8"/>
+
+  <!-- Remote Beam Rays -->
+  <path d="M170 380 L342 380" stroke="url(#neonCyan)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M210 410 L302 410" stroke="url(#neonPurple)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M236 440 L276 440" stroke="rgba(255,255,255,0.4)" stroke-width="6" stroke-linecap="round"/>
+</svg>
+
+)rawliteral";
+static const size_t ICON_SVG_LEN = 1997;
 
 #endif // WEB_ASSETS_H

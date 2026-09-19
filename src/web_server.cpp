@@ -63,9 +63,22 @@ void initWebServer() {
     ws.onEvent(onWsEvent);
     server.addHandler(&ws);
 
-    // Serve web app homepage directly from PROGMEM
+    // Serve web app homepage directly from PROGMEM (zero-copy flash streaming)
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        request->send(200, "text/html", INDEX_HTML);
+        request->send(200, "text/html", (const uint8_t*)INDEX_HTML, INDEX_HTML_LEN);
+    });
+
+    // PWA Manifest, Service Worker & App Icon
+    server.on("/manifest.json", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(200, "application/manifest+json", (const uint8_t*)MANIFEST_JSON, MANIFEST_JSON_LEN);
+    });
+
+    server.on("/sw.js", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(200, "application/javascript", (const uint8_t*)SW_JS, SW_JS_LEN);
+    });
+
+    server.on("/icon.svg", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(200, "image/svg+xml", (const uint8_t*)ICON_SVG, ICON_SVG_LEN);
     });
 
     // REST API Endpoint: POST or GET /api/press?action=FOCUS_AUTO

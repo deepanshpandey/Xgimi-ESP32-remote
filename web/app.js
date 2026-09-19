@@ -18,9 +18,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearBondsBtn = document.getElementById('clearBondsBtn');
   const pinInput = document.getElementById('pinInput');
   const submitPinBtn = document.getElementById('submitPinBtn');
+  const installPwaBtn = document.getElementById('installPwaBtn');
 
+  let deferredPrompt = null;
   let socket = null;
   let isConnected = false;
+
+  // PWA Service Worker Registration & Install Prompt
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[PWA] ServiceWorker registered:', reg.scope))
+        .catch(err => console.log('[PWA] ServiceWorker failed:', err));
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installPwaBtn) {
+      installPwaBtn.style.display = 'flex';
+    }
+  });
+
+  if (installPwaBtn) {
+    installPwaBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] User choice:', outcome);
+        deferredPrompt = null;
+        installPwaBtn.style.display = 'none';
+      } else {
+        alert('To install on iPhone/iPad: Tap the Share icon (box with up arrow) in Safari and tap "Add to Home Screen".');
+      }
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    console.log('[PWA] App successfully installed');
+    if (installPwaBtn) {
+      installPwaBtn.style.display = 'none';
+    }
+  });
 
   // Initialize WebSocket or HTTP polling fallback
   function initConnection() {
