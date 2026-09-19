@@ -45,14 +45,21 @@ void onWsEvent(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsEventTyp
     } else if (type == WS_EVT_DATA) {
         AwsFrameInfo* info = (AwsFrameInfo*)arg;
         if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
-            StaticJsonDocument<256> doc;
-            DeserializationError error = deserializeJson(doc, data, len);
-            if (!error) {
-                if (doc.containsKey("action")) {
-                    String action = doc["action"].as<String>();
-                    triggerKeyByAction(action);
-                } else if (doc.containsKey("type") && doc["type"] == "get_status") {
-                    sendPairingStatusJson(client);
+            if (len > 0 && data[0] != '{') {
+                // Ultra-fast path: raw action string directly dispatched without JSON parsing overhead
+                String action((char*)data, len);
+                triggerKeyByAction(action);
+            } else {
+                // Structured JSON messages
+                StaticJsonDocument<256> doc;
+                DeserializationError error = deserializeJson(doc, data, len);
+                if (!error) {
+                    if (doc.containsKey("action")) {
+                        String action = doc["action"].as<String>();
+                        triggerKeyByAction(action);
+                    } else if (doc.containsKey("type") && doc["type"] == "get_status") {
+                        sendPairingStatusJson(client);
+                    }
                 }
             }
         }

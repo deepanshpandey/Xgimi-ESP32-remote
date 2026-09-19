@@ -28,5 +28,5 @@ void setup() {
 void loop() {
     ws.cleanupClients();
     processSerialWiFiCommands();
-    delay(10);
+    delay(1);
 }

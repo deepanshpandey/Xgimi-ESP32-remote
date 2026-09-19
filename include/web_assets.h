@@ -40,7 +40,34 @@ static const char INDEX_HTML[] PROGMEM = R"rawliteral(
   margin: 0;
   padding: 0;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none;
+}
+
+/* Remove all sticky focus outlines & background highlights after click/tap */
+button:focus,
+button:focus-visible,
+.btn:focus,
+.btn:focus-visible,
+.btn-icon:focus,
+.btn-icon:focus-visible,
+.dpad-btn:focus,
+.dpad-btn:focus-visible,
+.dpad-center:focus,
+.dpad-center:focus-visible,
+.btn-pill:focus,
+.btn-pill:focus-visible,
+.btn-vol:focus,
+.btn-vol:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.dpad-btn:focus,
+.dpad-btn:focus-visible {
+  background: transparent !important;
 }
 
 html, body {
@@ -142,11 +169,7 @@ body {
   transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.btn-icon:hover {
-  background: var(--surface-btn-hover);
-}
-
-.btn-icon:active {
+.btn-icon:active, .btn-icon.active {
   background: var(--surface-btn-active);
   transform: scale(0.94);
 }
@@ -193,11 +216,6 @@ body {
   transition: background 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
 }
 
-.btn:hover {
-  background: var(--surface-btn-hover);
-  border-color: #32353e;
-}
-
 .btn:active, .btn.active {
   background: var(--surface-btn-active);
   transform: scale(0.95);
@@ -227,21 +245,12 @@ body {
   border-color: #321e20;
 }
 
-.btn-power:hover {
-  background: #221618;
-  border-color: #452427;
-}
-
-.btn-power:active {
+.btn-power:active, .btn-power.active {
   background: #2d181b;
 }
 
 .btn-focus {
   color: var(--google-blue);
-}
-
-.btn-focus:hover {
-  border-color: var(--border-focus);
 }
 
 .btn-misc {
@@ -283,6 +292,7 @@ body {
   align-items: center;
   justify-content: center;
   transition: color 0.12s ease, background 0.12s ease;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .dpad-btn .icon {
@@ -290,14 +300,10 @@ body {
   height: 28px;
 }
 
-.dpad-btn:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.dpad-btn:active {
-  background: rgba(255, 255, 255, 0.09);
-  color: #fff;
+.dpad-btn:active,
+.dpad-btn.active {
+  background: rgba(255, 255, 255, 0.09) !important;
+  color: #fff !important;
 }
 
 .dpad-up {
@@ -352,12 +358,8 @@ body {
   transition: transform 0.12s ease, background 0.12s ease;
 }
 
-.dpad-center:hover {
-  background: #282a31;
-  color: #fff;
-}
-
-.dpad-center:active {
+.dpad-center:active,
+.dpad-center.active {
   transform: translate(-50%, -50%) scale(0.93);
   background: #31353f;
 }
@@ -389,10 +391,6 @@ body {
   color: var(--google-blue);
 }
 
-.btn-voice:hover {
-  border-color: var(--border-focus);
-}
-
 /* Volume Control Bar (Vol -, Vol +) */
 .volume-bar {
   display: grid;
@@ -418,10 +416,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.btn-vol:hover {
-  border-color: #3d414d;
 }
 
 .btn-vol .icon {
@@ -598,7 +592,7 @@ body {
   color: var(--google-blue);
 }
 
-.btn-action-primary:hover {
+.btn-action-primary:active, .btn-action-primary.active {
   background: #1d283c;
   border-color: var(--google-blue);
 }
@@ -609,7 +603,7 @@ body {
   color: var(--google-red);
 }
 
-.btn-action-danger:hover {
+.btn-action-danger:active, .btn-action-danger.active {
   background: #2f181b;
   border-color: var(--google-red);
 }
@@ -675,6 +669,46 @@ body {
 
 .wifi-input-group .btn-modal {
   margin-top: 4px;
+}
+
+/* Mouse / Desktop Pointer Hover Only - Never sticky on Touch Devices */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    background: var(--surface-btn-hover);
+    border-color: #32353e;
+  }
+  .btn-icon:hover {
+    background: var(--surface-btn-hover);
+  }
+  .btn-power:hover {
+    background: #221618;
+    border-color: #452427;
+  }
+  .btn-focus:hover {
+    border-color: var(--border-focus);
+  }
+  .dpad-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .dpad-center:hover {
+    background: #282a31;
+    color: #fff;
+  }
+  .btn-voice:hover {
+    border-color: var(--border-focus);
+  }
+  .btn-vol:hover {
+    border-color: #3d414d;
+  }
+  .btn-action-primary:hover {
+    background: #1d283c;
+    border-color: var(--google-blue);
+  }
+  .btn-action-danger:hover {
+    background: #2f181b;
+    border-color: var(--google-red);
+  }
 }
 
 </style>
@@ -1073,7 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: 'key_press', action: actionName }));
+      socket.send(actionName);
     } else {
       fetch(`/api/press?action=${encodeURIComponent(actionName)}`, { method: 'POST' })
         .catch(err => console.error('Failed sending key press:', err));
@@ -1106,7 +1140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(res => res.json())
       .then(data => {
         triggerHaptic('success');
-        alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMI-RC-pseudo.');
+        alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMI RC pseudo.');
         fetchPairingStatus();
       })
       .catch(err => alert('Failed starting BLE pairing mode: ' + err));
@@ -1216,16 +1250,18 @@ document.addEventListener('DOMContentLoaded', () => {
       triggerAction(actionName);
     });
 
-    button.addEventListener('pointerup', () => {
+    const releaseButton = () => {
       button.classList.remove('active');
-    });
+      button.blur();
+    };
 
-    button.addEventListener('pointerleave', () => {
+    button.addEventListener('pointerup', releaseButton);
+    button.addEventListener('pointerleave', releaseButton);
+    button.addEventListener('pointercancel', releaseButton);
+    button.addEventListener('touchend', releaseButton);
+    button.addEventListener('click', () => {
       button.classList.remove('active');
-    });
-
-    button.addEventListener('pointercancel', () => {
-      button.classList.remove('active');
+      button.blur();
     });
   });
 
@@ -1268,7 +1304,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </html>
 )rawliteral";
-static const size_t INDEX_HTML_LEN = 36156;
+static const size_t INDEX_HTML_LEN = 37463;
 
 static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
 {
@@ -1302,7 +1338,7 @@ static const char MANIFEST_JSON[] PROGMEM = R"rawliteral(
 static const size_t MANIFEST_JSON_LEN = 589;
 
 static const char SW_JS[] PROGMEM = R"rawliteral(
-const CACHE_NAME = 'xgimi-remote-v1';
+const CACHE_NAME = 'xgimi-remote-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',

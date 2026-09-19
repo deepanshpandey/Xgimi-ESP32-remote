@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: 'key_press', action: actionName }));
+      socket.send(actionName);
     } else {
       fetch(`/api/press?action=${encodeURIComponent(actionName)}`, { method: 'POST' })
         .catch(err => console.error('Failed sending key press:', err));
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(res => res.json())
       .then(data => {
         triggerHaptic('success');
-        alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMI-RC-pseudo.');
+        alert('BLE Pairing Mode Enabled for 60s! On your XGIMI Projector, go to Settings -> Remotes & Accessories -> Add Accessory and select XGIMI RC pseudo.');
         fetchPairingStatus();
       })
       .catch(err => alert('Failed starting BLE pairing mode: ' + err));
@@ -319,16 +319,18 @@ document.addEventListener('DOMContentLoaded', () => {
       triggerAction(actionName);
     });
 
-    button.addEventListener('pointerup', () => {
+    const releaseButton = () => {
       button.classList.remove('active');
-    });
+      button.blur();
+    };
 
-    button.addEventListener('pointerleave', () => {
+    button.addEventListener('pointerup', releaseButton);
+    button.addEventListener('pointerleave', releaseButton);
+    button.addEventListener('pointercancel', releaseButton);
+    button.addEventListener('touchend', releaseButton);
+    button.addEventListener('click', () => {
       button.classList.remove('active');
-    });
-
-    button.addEventListener('pointercancel', () => {
-      button.classList.remove('active');
+      button.blur();
     });
   });
 

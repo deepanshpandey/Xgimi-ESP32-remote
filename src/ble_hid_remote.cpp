@@ -1,6 +1,8 @@
 #include "ble_hid_remote.h"
 #include "xgimi_keymap.h"
 
+extern "C" int ble_svc_gap_device_appearance_set(uint16_t appearance);
+
 BLEHidRemoteServer BleRemote;
 
 // HID Report Descriptor matching standard Keyboard + Consumer Control
@@ -52,6 +54,9 @@ BLEHidRemoteServer::BLEHidRemoteServer()
 void BLEHidRemoteServer::begin(const char* deviceName, uint16_t vid, uint16_t pid) {
     NimBLEDevice::init(deviceName);
     
+    // Explicitly set GAP Appearance characteristic (0x2A01) to Generic Remote Control (0x0180 = 384)
+    ble_svc_gap_device_appearance_set(0x0180);
+
     // Enable BLE Security (Bonding + MITM + Secure Connections)
     NimBLEDevice::setSecurityAuth(true, true, true);
     NimBLEDevice::setSecurityIOCap(BLE_HS_IO_NO_INPUT_OUTPUT);
@@ -68,6 +73,7 @@ void BLEHidRemoteServer::begin(const char* deviceName, uint16_t vid, uint16_t pi
     hid->pnp(0x02, vid, pid, 0x0100);    // Vendor ID source: Bluetooth SIG
     hid->hidInfo(0x00, 0x01);             // Country code 0, Normal connectable
     hid->reportMap((uint8_t*)HID_REPORT_DESCRIPTOR, sizeof(HID_REPORT_DESCRIPTOR));
+    hid->setBatteryLevel(100);            // Populate Battery Service (0x180F / 0x2A19)
     hid->startServices();
 
     startPairingMode(60);
@@ -78,6 +84,7 @@ void BLEHidRemoteServer::startPairingMode(uint32_t durationSeconds) {
     NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
     pAdvertising->setAppearance(0x0180); // 0x0180 Remote Control
     pAdvertising->addServiceUUID(hid->hidService()->getUUID());
+    pAdvertising->addServiceUUID(hid->batteryService()->getUUID());
     pAdvertising->start(durationSeconds);
     advertising = true;
     Serial.printf("[BLE] Pairing Mode Enabled! Advertising for %u seconds...\n", durationSeconds);
@@ -112,7 +119,11 @@ void BLEHidRemoteServer::onConnect(NimBLEServer* pServer) {
     connected = true;
     advertising = false;
     currentConnId = pServer->getPeerInfo(0).getConnHandle();
-    Serial.println("[BLE] Connection Established with XGIMI Device!");
+    
+    // Request fast 7.5ms - 15ms BLE connection interval for instant, low-latency button response
+    pServer->updateConnParams(currentConnId, 6, 12, 0, 200);
+    
+    Serial.println("[BLE] Connection Established with XGIMI Device (Low-Latency Mode Active)!");
 }
 
 void BLEHidRemoteServer::onDisconnect(NimBLEServer* pServer) {
@@ -160,7 +171,7 @@ void BLEHidRemoteServer::sendKey(uint8_t hidPage, uint16_t hidCode) {
         
         inputKeyboard->setValue(reportOn, sizeof(reportOn));
         inputKeyboard->notify();
-        delay(15);
+        delay(5);
         inputKeyboard->setValue(reportOff, sizeof(reportOff));
         inputKeyboard->notify();
         Serial.printf("[BLE] Sent Keyboard Scancode: 0x%02X\n", hidCode);
@@ -170,7 +181,7 @@ void BLEHidRemoteServer::sendKey(uint8_t hidPage, uint16_t hidCode) {
 
         inputConsumer->setValue(reportOn, sizeof(reportOn));
         inputConsumer->notify();
-        delay(15);
+        delay(5);
         inputConsumer->setValue(reportOff, sizeof(reportOff));
         inputConsumer->notify();
         Serial.printf("[BLE] Sent Consumer Control Usage: 0x%04X\n", hidCode);
